@@ -1,11 +1,13 @@
 const App = {
   themes: [
-    { id: 'default', name: '默认蓝' },
-    { id: 'dark', name: '暗黑' },
-    { id: 'green', name: '清新绿' },
-    { id: 'purple', name: '典雅紫' },
-    { id: 'red', name: '中国红' },
-    { id: 'orange', name: '活力橙' }
+    { id: 'default', name: '雅致金', color: '#D4A574' },
+    { id: 'dark', name: '深邃蓝', color: '#1A1A2E' },
+    { id: 'green', name: '清新绿', color: '#27AE60' },
+    { id: 'purple', name: '典雅紫', color: '#8E44AD' },
+    { id: 'red', name: '中国红', color: '#C0392B' },
+    { id: 'orange', name: '温暖橙', color: '#E67E22' },
+    { id: 'blue', name: '海洋蓝', color: '#2563EB' },
+    { id: 'chinese-red', name: '喜庆红', color: '#DC2626' }
   ],
 
   init() {
@@ -14,8 +16,58 @@ const App = {
     this.renderThemeOptions()
     this.bindEvents()
     Calendar.init()
-
+    
+    // 页面加载动画
+    this.animatePageLoad()
+    
     console.log('万年历应用已启动')
+  },
+
+  animatePageLoad() {
+    document.body.style.opacity = '0'
+    document.body.style.transition = 'opacity 0.6s ease'
+    
+    setTimeout(() => {
+      document.body.style.opacity = '1'
+    }, 100)
+
+    // 添加交错动画
+    const header = document.querySelector('.header')
+    const calendar = document.querySelector('.calendar-container, .year-container')
+    const legend = document.querySelector('.legend')
+    
+    if (header) {
+      header.style.opacity = '0'
+      header.style.transform = 'translateY(-20px)'
+      header.style.transition = 'opacity 0.6s ease, transform 0.6s ease'
+      
+      setTimeout(() => {
+        header.style.opacity = '1'
+        header.style.transform = 'translateY(0)'
+      }, 200)
+    }
+    
+    if (calendar) {
+      calendar.style.opacity = '0'
+      calendar.style.transform = 'scale(0.98)'
+      calendar.style.transition = 'opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s'
+      
+      setTimeout(() => {
+        calendar.style.opacity = '1'
+        calendar.style.transform = 'scale(1)'
+      }, 400)
+    }
+    
+    if (legend) {
+      legend.style.opacity = '0'
+      legend.style.transform = 'translateY(20px)'
+      legend.style.transition = 'opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s'
+      
+      setTimeout(() => {
+        legend.style.opacity = '1'
+        legend.style.transform = 'translateY(0)'
+      }, 600)
+    }
   },
 
   loadTheme() {
@@ -44,6 +96,11 @@ const App = {
     grid.querySelectorAll('.theme-option').forEach(el => {
       el.addEventListener('click', () => {
         this.applyTheme(el.dataset.theme)
+        // 添加点击反馈动画
+        el.style.transform = 'scale(0.95)'
+        setTimeout(() => {
+          el.style.transform = ''
+        }, 150)
       })
     })
   },
@@ -73,28 +130,34 @@ const App = {
 
   bindEvents() {
     document.getElementById('prevBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('prevBtn'))
       Calendar.prev()
     })
 
     document.getElementById('nextBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('nextBtn'))
       Calendar.next()
     })
 
     document.getElementById('todayBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('todayBtn'))
       Calendar.goToToday()
     })
 
     document.getElementById('monthViewBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('monthViewBtn'))
       Calendar.setView('month')
       this.updateViewButtons()
     })
 
     document.getElementById('yearViewBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('yearViewBtn'))
       Calendar.setView('year')
       this.updateViewButtons()
     })
 
     document.getElementById('themeBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('themeBtn'))
       document.getElementById('themeModal').classList.add('active')
     })
 
@@ -103,6 +166,7 @@ const App = {
     })
 
     document.getElementById('bgBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('bgBtn'))
       this.openBgModal()
     })
 
@@ -139,10 +203,12 @@ const App = {
     })
 
     document.getElementById('exportBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('exportBtn'))
       ExportService.export()
     })
 
     document.getElementById('importBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('importBtn'))
       document.getElementById('importInput').click()
     })
 
@@ -173,6 +239,7 @@ const App = {
     })
 
     document.getElementById('saveBtn').addEventListener('click', () => {
+      this.animateButton(document.getElementById('saveBtn'))
       this.saveEvent()
     })
 
@@ -201,6 +268,13 @@ const App = {
         document.getElementById('bgModal').classList.remove('active')
       }
     })
+  },
+
+  animateButton(btn) {
+    btn.style.transform = 'scale(0.95)'
+    setTimeout(() => {
+      btn.style.transform = ''
+    }, 150)
   },
 
   updateViewButtons() {
@@ -277,7 +351,7 @@ const App = {
     `
 
     if (holidayInfo && holidayInfo.holidayName) {
-      dateInfoHtml += `<div style="color: var(--holiday-color); font-size: 16px; margin-top: 6px; font-weight: 500;">${holidayInfo.holidayName}</div>`
+      dateInfoHtml += `<div style="color: var(--accent-red); font-size: 15px; margin-top: 8px; font-weight: 600;">${holidayInfo.holidayName}</div>`
     }
 
     document.getElementById('dateInfo').innerHTML = dateInfoHtml
